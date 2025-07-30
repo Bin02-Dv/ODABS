@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Online Doctor Booking System</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="#">DoctorBooking</a>
+    <div class="collapse navbar-collapse">
+      <ul class="navbar-nav ms-auto">
+        <li class="nav-item"><a class="nav-link" href="#home">Home</a></li>
+        <li class="nav-item"><a class="nav-link" href="#about">About</a></li>
+        <li class="nav-item"><a class="nav-link" href="#contact">Contact</a></li>
+        <li class="nav-item"><a class="nav-link" href="#doctors">Doctors</a></li>
+        <li class="nav-item"><a class="nav-link" href="#login">Login</a></li>
+        <li class="nav-item"><a class="nav-link" href="#register">Register</a></li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<!-- Home Page -->
+<section id="home" class="container py-5">
+  <div class="text-center">
+    <h1>Welcome to Our Online Doctor Booking System</h1>
+    <p>Book appointments easily and quickly with your preferred doctor.</p>
+    <a href="#login" class="btn btn-primary">Login</a>
+    <a href="#register" class="btn btn-outline-primary">Register</a>
+  </div>
+</section>
+
+<!-- About Us Page -->
+<section id="about" class="bg-light py-5">
+  <div class="container text-center">
+    <h2>About Us</h2>
+    <p>We provide a convenient platform to connect patients with qualified medical professionals.</p>
+  </div>
+</section>
+
+<!-- Contact Page -->
+<section id="contact" class="py-5">
+  <div class="container">
+    <h2>Contact Us</h2>
+    <form>
+      <div class="mb-3">
+        <label for="name" class="form-label">Name</label>
+        <input type="text" class="form-control" id="name">
+      </div>
+      <div class="mb-3">
+        <label for="email" class="form-label">Email</label>
+        <input type="email" class="form-control" id="email">
+      </div>
+      <div class="mb-3">
+        <label for="message" class="form-label">Message</label>
+        <textarea class="form-control" id="message" rows="3"></textarea>
+      </div>
+      <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+  </div>
+</section>
+
+<!-- Doctor Listing/Search Page -->
+<section id="doctors" class="bg-light py-5">
+  <div class="container">
+    <h2>Find a Doctor</h2>
+    <input type="search" class="form-control mb-3" placeholder="Search by name or specialty">
+    <div class="row">
+      <div class="col-md-4 mb-3">
+        <div class="card">
+          <div class="card-body">
+            <h5 class="card-title">Dr. Jane Doe</h5>
+            <p class="card-text">Cardiologist</p>
+            <a href="#doctor-profile" class="btn btn-outline-primary">View Profile</a>
+          </div>
+        </div>
+      </div>
+      <!-- Repeat for more doctors -->
+    </div>
+  </div>
+</section>
+
+<!-- Doctor Profile Page -->
+<section id="doctor-profile" class="py-5">
+  <div class="container">
+    <h2>Doctor Profile</h2>
+    <p><strong>Name:</strong> Dr. Jane Doe</p>
+    <p><strong>Specialization:</strong> Cardiologist</p>
+    <p><strong>Biography:</strong> Experienced in heart-related treatment with over 10 years of practice.</p>
+    <p><strong>Available Slots:</strong> Mon - Fri (10:00am - 2:00pm)</p>
+  </div>
+</section>
+
+<!-- Login Page -->
+<section id="login" class="bg-light py-5">
+  <div class="container">
+    <h2>Login</h2>
+    <form>
+      <div class="mb-3">
+        <label class="form-label">Email</label>
+        <input type="email" class="form-control">
+      </div>
+      <div class="mb-3">
+        <label class="form-label">Password</label>
+        <input type="password" class="form-control">
+      </div>
+      <button class="btn btn-primary">Login</button>
+    </form>
+  </div>
+</section>
+
+<!-- Register Page -->
+<section id="register" class="py-5">
+  <div class="container">
+    <h2 class="text-center">Register</h2>
+    <br>
+    <div class="row">
+      <div class="col-md-6">
+        <h4>Patient Registration</h4>
+        <form>
+          <div class="mb-3">
+            <label class="form-label">Full Name</label>
+            <input type="text" class="form-control">
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Email</label>
+            <input type="email" class="form-control">
+          </div>
+          <button class="btn btn-outline-primary">Register as Patient</button>
+        </form>
+      </div>
+      <div class="col-md-6">
+        <h4>Doctor Registration</h4>
+        <form>
+          <div class="mb-3">
+            <label class="form-label">Full Name</label>
+            <input type="text" class="form-control">
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Specialization</label>
+            <input type="text" class="form-control">
+          </div>
+          <button class="btn btn-outline-success">Register as Doctor</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
