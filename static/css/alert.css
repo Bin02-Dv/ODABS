@@ -1,0 +1,31 @@
+.alert-danger{
+    background-color: rgba(254, 60, 86, 0.586);
+    padding: 20px;
+    margin-top: 10px;
+    text-align: center;
+    border-radius: 10px;
+    border: 2px solid red;
+    font-size: 20px;
+    color: rgb(128, 4, 4);
+    display: none;
+}
+
+.alert-success{
+    background-color: rgba(6, 167, 94, 0.586);
+    padding: 20px;
+    margin-top: 10px;
+    text-align: center;
+    border-radius: 10px;
+    border: 2px solid rgba(2, 103, 58, 0.586);
+    font-size: 20px;
+    color: rgba(1, 36, 20, 0.758);
+    display: none;
+}
+
+.alert-danger.block {
+    display: block;
+}
+
+.alert-success.block {
+    display: block;
+}

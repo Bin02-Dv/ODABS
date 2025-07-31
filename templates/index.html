@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -5,6 +6,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Online Doctor Booking System</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+  <link rel="stylesheet" href="{% static 'css/alert.css' %}">
 </head>
 <body>
 
@@ -98,8 +101,12 @@
 
 <!-- Login Page -->
 <section id="login" class="bg-light py-5">
-  <div class="container">
-    <h2>Login</h2>
+  <div class="container patient">
+    <h2>Patient Login</h2>
+    <div class="form-group">
+        <div class="alert-danger"></div>
+        <div class="alert-success"></div>
+    </div>
     <form>
       <div class="mb-3">
         <label class="form-label">Email</label>
@@ -112,6 +119,82 @@
       <button class="btn btn-primary">Login</button>
     </form>
   </div>
+ <br><br>
+  <div class="container">
+    <h2>Doctor Login</h2>
+    <div class="form-group">
+        <div class="alert-danger"></div>
+        <div class="alert-success"></div>
+    </div>
+    <form>
+      <div class="mb-3">
+        <label class="form-label">Email</label>
+        <input type="email" class="form-control">
+      </div>
+      <div class="mb-3">
+        <label class="form-label">Password</label>
+        <input type="password" class="form-control">
+      </div>
+      <button class="btn btn-primary">Login</button>
+    </form>
+  </div>
+  <br><br>
+  <div class="container">
+    <h2>Admin Login</h2>
+    <div class="form-group">
+        <div class="alert-danger"></div>
+        <div class="alert-success"></div>
+    </div>
+    <form>
+      <div class="mb-3">
+        <label class="form-label">Email</label>
+        <input type="email" class="form-control">
+      </div>
+      <div class="mb-3">
+        <label class="form-label">Password</label>
+        <input type="password" class="form-control">
+      </div>
+      <button class="btn btn-primary">Login</button>
+    </form>
+  </div>
+
+
+  <script>
+    // login query
+    $(document).on('submit', '#login', function (e){
+        e.preventDefault();
+        var green = $(".alert-success");
+        var red = $(".alert-danger");
+        var formData = new FormData(this);
+        $.ajax({
+            type: 'POST',
+            url: '/',
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function (response){
+                var success = response['success'];
+                if(success){
+                    red.removeClass("block");
+                    green.html('');
+                    green.addClass("block");
+                    green.append(response['message']);
+                    window.location.href = '/';
+                }else{
+                    green.removeClass("block");
+                    red.html('');
+                    red.addClass("block");
+                    red.append(response['message']);
+                }
+
+                const con = document.querySelector('.conn');
+                if (con) {
+                    con.scrollTo({ top: 0, behavior: 'smooth' });
+                }
+            }
+        });
+    });
+  </script>
 </section>
 
 <!-- Register Page -->
@@ -122,21 +205,29 @@
     <div class="row">
       <div class="col-md-6">
         <h4>Patient Registration</h4>
-        <form>
+        <form id="patient_signUp">
           <div class="mb-3">
             <label class="form-label">Full Name</label>
-            <input type="text" class="form-control">
+            <input type="text" class="form-control" name="full_name" required>
           </div>
           <div class="mb-3">
             <label class="form-label">Email</label>
-            <input type="email" class="form-control">
+            <input type="email" class="form-control" name="email" required>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Password</label>
+            <input type="password" class="form-control" name="password" required>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Confirm password</label>
+            <input type="password" class="form-control" name="confirm_password" required>
           </div>
           <button class="btn btn-outline-primary">Register as Patient</button>
         </form>
       </div>
       <div class="col-md-6">
         <h4>Doctor Registration</h4>
-        <form>
+        <form id="doctor_signUp">
           <div class="mb-3">
             <label class="form-label">Full Name</label>
             <input type="text" class="form-control">
@@ -150,6 +241,80 @@
       </div>
     </div>
   </div>
+
+
+  <script>
+  // login query
+    $(document).on('submit', '#doctor_signUp', function (e){
+        e.preventDefault();
+        var green = $(".alert-success");
+        var red = $(".alert-danger");
+        var formData = new FormData(this);
+        $.ajax({
+            type: 'POST',
+            url: '/',
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function (response){
+                var success = response['success'];
+                if(success){
+                    red.removeClass("block");
+                    green.html('');
+                    green.addClass("block");
+                    green.append(response['message']);
+                    window.location.href = '/';
+                }else{
+                    green.removeClass("block");
+                    red.html('');
+                    red.addClass("block");
+                    red.append(response['message']);
+                }
+
+                const con = document.querySelector('.conn');
+                if (con) {
+                    con.scrollTo({ top: 0, behavior: 'smooth' });
+                }
+            }
+        });
+    });
+  </script>
+  <script>
+  // login query
+    $(document).on('submit', '#patient_signUp', function (e){
+        e.preventDefault();
+        var green = $(".alert-success");
+        var red = $(".alert-danger");
+        var formData = new FormData(this);
+        $.ajax({
+            type: 'POST',
+            url: '/',
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function (response){
+                var success = response['success'];
+                if(success){
+                    red.removeClass("block");
+                    green.html('');
+                    green.addClass("block");
+                    green.append(response['message']);
+                    window.location.href = '/';
+                }else{
+                    green.removeClass("block");
+                    red.html('');
+                    red.addClass("block");
+                    red.append(response['message']);
+                }
+
+                const con = document.querySelector('.patient');
+                if (con) {
+                    con.scrollTo({ top: 0, behavior: 'smooth' });
+                }
+            }
+        });
+    });
+  </script>
 </section>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
