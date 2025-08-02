@@ -102,57 +102,20 @@
 <!-- Login Page -->
 <section id="login" class="bg-light py-5">
   <div class="container patient">
-    <h2>Patient Login</h2>
+    <h2>Login</h2>
     <div class="form-group">
         <div class="alert-danger"></div>
         <div class="alert-success"></div>
     </div>
-    <form>
+    <form id="Login">
+      {% csrf_token %}
       <div class="mb-3">
-        <label class="form-label">Email</label>
-        <input type="email" class="form-control">
+        <label class="form-label">Username</label>
+        <input type="text" class="form-control" name="username" required>
       </div>
       <div class="mb-3">
         <label class="form-label">Password</label>
-        <input type="password" class="form-control">
-      </div>
-      <button class="btn btn-primary">Login</button>
-    </form>
-  </div>
- <br><br>
-  <div class="container">
-    <h2>Doctor Login</h2>
-    <div class="form-group">
-        <div class="alert-danger"></div>
-        <div class="alert-success"></div>
-    </div>
-    <form>
-      <div class="mb-3">
-        <label class="form-label">Email</label>
-        <input type="email" class="form-control">
-      </div>
-      <div class="mb-3">
-        <label class="form-label">Password</label>
-        <input type="password" class="form-control">
-      </div>
-      <button class="btn btn-primary">Login</button>
-    </form>
-  </div>
-  <br><br>
-  <div class="container">
-    <h2>Admin Login</h2>
-    <div class="form-group">
-        <div class="alert-danger"></div>
-        <div class="alert-success"></div>
-    </div>
-    <form>
-      <div class="mb-3">
-        <label class="form-label">Email</label>
-        <input type="email" class="form-control">
-      </div>
-      <div class="mb-3">
-        <label class="form-label">Password</label>
-        <input type="password" class="form-control">
+        <input type="password" class="form-control" name="password" required>
       </div>
       <button class="btn btn-primary">Login</button>
     </form>
@@ -161,14 +124,14 @@
 
   <script>
     // login query
-    $(document).on('submit', '#login', function (e){
+    $(document).on('submit', '#Login', function (e){
         e.preventDefault();
         var green = $(".alert-success");
         var red = $(".alert-danger");
         var formData = new FormData(this);
         $.ajax({
             type: 'POST',
-            url: '/',
+            url: '/login/', 
             data: formData,
             processData: false,
             contentType: false,
@@ -179,7 +142,7 @@
                     green.html('');
                     green.addClass("block");
                     green.append(response['message']);
-                    window.location.href = '/';
+                    window.location.href = response['url'];
                 }else{
                     green.removeClass("block");
                     red.html('');
@@ -205,7 +168,12 @@
     <div class="row">
       <div class="col-md-6">
         <h4>Patient Registration</h4>
+        <div class="form-group">
+            <div class="alert-danger"></div>
+            <div class="alert-success"></div>
+        </div>
         <form id="patient_signUp">
+          {% csrf_token %}
           <div class="mb-3">
             <label class="form-label">Full Name</label>
             <input type="text" class="form-control" name="full_name" required>
@@ -213,6 +181,10 @@
           <div class="mb-3">
             <label class="form-label">Email</label>
             <input type="email" class="form-control" name="email" required>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Username</label>
+            <input type="text" class="form-control" name="username" required>
           </div>
           <div class="mb-3">
             <label class="form-label">Password</label>
@@ -227,14 +199,31 @@
       </div>
       <div class="col-md-6">
         <h4>Doctor Registration</h4>
+        <div class="form-group">
+            <div class="alert-danger"></div>
+            <div class="alert-success"></div>
+        </div>
         <form id="doctor_signUp">
+          {% csrf_token %}
           <div class="mb-3">
             <label class="form-label">Full Name</label>
-            <input type="text" class="form-control">
+            <input type="text" class="form-control" name="full_name">
           </div>
           <div class="mb-3">
-            <label class="form-label">Specialization</label>
-            <input type="text" class="form-control">
+            <label class="form-label">Email</label>
+            <input type="email" class="form-control" name="email" required>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Username</label>
+            <input type="text" class="form-control" name="username" required>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Password</label>
+            <input type="password" class="form-control" name="password" required>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Confirm password</label>
+            <input type="password" class="form-control" name="confirm_password" required>
           </div>
           <button class="btn btn-outline-success">Register as Doctor</button>
         </form>
@@ -252,7 +241,7 @@
         var formData = new FormData(this);
         $.ajax({
             type: 'POST',
-            url: '/',
+            url: '/doctor-signUp/',
             data: formData,
             processData: false,
             contentType: false,
@@ -263,17 +252,11 @@
                     green.html('');
                     green.addClass("block");
                     green.append(response['message']);
-                    window.location.href = '/';
                 }else{
                     green.removeClass("block");
                     red.html('');
                     red.addClass("block");
                     red.append(response['message']);
-                }
-
-                const con = document.querySelector('.conn');
-                if (con) {
-                    con.scrollTo({ top: 0, behavior: 'smooth' });
                 }
             }
         });
@@ -288,7 +271,7 @@
         var formData = new FormData(this);
         $.ajax({
             type: 'POST',
-            url: '/',
+            url: '/patient-signUp/',
             data: formData,
             processData: false,
             contentType: false,
@@ -299,17 +282,11 @@
                     green.html('');
                     green.addClass("block");
                     green.append(response['message']);
-                    window.location.href = '/';
                 }else{
                     green.removeClass("block");
                     red.html('');
                     red.addClass("block");
                     red.append(response['message']);
-                }
-
-                const con = document.querySelector('.patient');
-                if (con) {
-                    con.scrollTo({ top: 0, behavior: 'smooth' });
                 }
             }
         });
