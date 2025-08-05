@@ -22,6 +22,10 @@
 <div class="container">
     <div class="appointment-form">
       <h3 class="form-title text-center">Book an Appointment</h3>
+      <div class="form-group">
+          <div class="alert-danger"></div>
+          <div class="alert-success"></div>
+      </div>
       <form method="POST" id="book_appointment">
         {% csrf_token %}
         
@@ -31,7 +35,7 @@
           <select class="form-select" id="doctor" name="doctor" required>
             <option value="">-- Choose a doctor --</option>
             {% for doc in doctors %}
-              <option value="{{ doc.id }}">{{ doc.get_full_name }} ({{ doc.profile.speciallization }})</option>
+              <option value="{{ doc.id }}">{{ doc.doctor.doctor.first_name }} ({{ doc.doctor.speciallization }}) {{ doc.days }}, {{ doc.time_from }} - {{ doc.time_to }}</option>
             {% endfor %}
           </select>
         </div>

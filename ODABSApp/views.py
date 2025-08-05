@@ -3,7 +3,7 @@ from django.contrib.auth.models import User
 from django.http import JsonResponse
 from django.contrib import auth
 from django.contrib.auth.decorators import login_required
-from .models import DoctorProfile, DoctorAvailability, PatientProfile
+from .models import DoctorProfile, DoctorAvailability, PatientProfile, Appointments
 
 # Create your views here.
 
@@ -47,7 +47,12 @@ def d_dash(request):
 
 @login_required(login_url='/')
 def patient_appointments(request):
-    return render(request, "patient/my-appointment.html")
+    current_user = PatientProfile.objects.get(patient=request.user)
+    apppointments = Appointments.objects.filter(patient=current_user, next_app=True)
+    context = {
+        'appointments': apppointments
+    }
+    return render(request, "patient/my-appointment.html", context)
 
 @login_required(login_url='/')
 def d_profile(request):
@@ -116,7 +121,36 @@ def p_profile(request):
 
 @login_required(login_url='/')
 def book_appointment(request):
-    return render(request, "patient/book-appointment.html")
+    doctors = DoctorAvailability.objects.all()
+    currrent_patient = PatientProfile.objects.get(patient=request.user)
+    if request.method == 'POST':
+        doc_id = request.POST.get("doctor", "")
+        date = request.POST.get("date", "")
+        time = request.POST.get("time", "")
+        message_or_reason = request.POST.get("message", "")
+        
+        try:
+        
+            doctor = DoctorProfile.objects.get(id=doc_id)
+            Appointments.objects.create(
+                patient=currrent_patient,
+                doctor=doctor, date=date, time=time, message_or_reason=message_or_reason
+            )
+            
+            return JsonResponse({
+                "message": "Appointment Booked successfully...",
+                "success": True
+            })
+                
+        except DoctorProfile.DoesNotExist:
+            return JsonResponse({
+                    "message": "We Couldn't find the selected doctor!!",
+                    "success": False
+                })
+    context = {
+        "doctors": doctors
+    }
+    return render(request, "patient/book-appointment.html", context)
 
 @login_required(login_url='/')
 def a_dash(request):
