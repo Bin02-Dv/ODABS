@@ -3,7 +3,7 @@
 
 {% block content %}
 <div class="container-fluid p-4">
-      <h2>Welcome, Dr. Jane Doe</h2>
+      <h2>Welcome, Dr. {{availability.doctor.doctor.first_name}}</h2>
 
       <!-- Dashboard Overview -->
       <section class="mt-4">
@@ -16,20 +16,70 @@
       <!-- Schedule Management Example -->
       <section class="mt-4">
         <h4>Manage Your Availability</h4>
-        <form class="row g-3">
+        <div class="form-group">
+            <div class="alert-danger"></div>
+            <div class="alert-success"></div>
+        </div>
+        <form class="row g-3" method="POST" id="availability">
+          {% csrf_token %}
           <div class="col-md-6">
-            <label class="form-label">Available Date</label>
-            <input type="date" class="form-control">
+            <label class="form-label">Time from</label>
+            <input type="time" class="form-control" name="from">
           </div>
           <div class="col-md-6">
-            <label class="form-label">Time Slot</label>
-            <input type="time" class="form-control">
+            <label class="form-label">Time To</label>
+            <input type="time" class="form-control" name="to">
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Days (From - to)</label>
+            <input type="text" class="form-control" name="days" value="{{availability.days}}">
           </div>
           <div class="col-12">
+            {% if not availability %}
             <button type="submit" class="btn btn-primary">Add Availability</button>
+            {% else %}
+            <button type="submit" class="btn btn-primary">Save Availability</button>
+            {% endif %}
           </div>
         </form>
+
+        <span>Availability: {{availability.days}} ({{availability.time_from}} - {{availability.time_to}})</span>
       </section>
     </div>
   </div>
+
+  <script>
+    $(document).on('submit', '#availability', function (e){
+        e.preventDefault();
+        var green = $(".alert-success");
+        var red = $(".alert-danger");
+        var formData = new FormData(this);
+        $.ajax({
+            type: 'POST',
+            url: '/d-dash/', 
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function (response){
+                var success = response['success'];
+                if(success){
+                    red.removeClass("block");
+                    green.html('');
+                    green.addClass("block");
+                    green.append(response['message']);
+                }else{
+                    green.removeClass("block");
+                    red.html('');
+                    red.addClass("block");
+                    red.append(response['message']);
+                }
+
+                const con = document.querySelector('.conn');
+                if (con) {
+                    con.scrollTo({ top: 0, behavior: 'smooth' });
+                }
+            }
+        });
+    });
+  </script>
 {% endblock %}

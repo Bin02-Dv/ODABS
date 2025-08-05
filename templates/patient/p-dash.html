@@ -2,7 +2,7 @@
 
 {% block content %}
 <div class="container mt-4">
-    <h2>Welcome, [Patient Name]</h2>
+    <h2>Welcome, [{{current_user.first_name}}]</h2>
     <p class="text-muted">Here's a quick overview of your dashboard.</p>
 
     <div class="row g-4">
@@ -21,7 +21,7 @@
           <div class="card-body">
             <h5 class="card-title">Book New Appointment</h5>
             <p class="card-text">Choose from a list of doctors and book a visit at your convenience.</p>
-            <a href="#" class="btn btn-success btn-sm">Book Now</a>
+            <a href="/book-appointment/" class="btn btn-success btn-sm">Book Now</a>
           </div>
         </div>
       </div>
@@ -43,11 +43,11 @@
           <div class="card-body">
             <h5 class="card-title">Profile Information</h5>
             <p class="card-text">
-              <strong>Name:</strong> [Patient Name]<br>
-              <strong>Email:</strong> [email@example.com]<br>
-              <strong>Phone:</strong> [+234 000 000 0000]
+              <strong>Name:</strong> [{{current_patient.patient.first_name}}]<br>
+              <strong>Email:</strong> [{{current_patient.email}}]<br>
+              <strong>Phone:</strong> [{{current_patient.phone_number}}]
             </p>
-            <a href="#" class="btn btn-outline-primary btn-sm">Edit Profile</a>
+            <a href="/p-profile/" class="btn btn-outline-primary btn-sm">Edit Profile</a>
           </div>
         </div>
       </div>

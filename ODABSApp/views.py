@@ -3,6 +3,7 @@ from django.contrib.auth.models import User
 from django.http import JsonResponse
 from django.contrib import auth
 from django.contrib.auth.decorators import login_required
+from .models import DoctorProfile, DoctorAvailability, PatientProfile
 
 # Create your views here.
 
@@ -11,11 +12,111 @@ def index(request):
 
 @login_required(login_url='/')
 def dash(request):
-    return render(request, "patient/p-dash.html")
+    current_user = User.objects.get(username=request.user)
+    current_patient = PatientProfile.objects.filter(patient=current_user).first()
+    return render(request, "patient/p-dash.html", {'current_user': current_user, 'current_patient': current_patient})
 
 @login_required(login_url='/')
 def d_dash(request):
-    return render(request, "doctor/d-dash.html")
+    current_doctor = DoctorProfile.objects.get(doctor=request.user)
+    availabililty = DoctorAvailability.objects.filter(doctor=current_doctor).first()
+    if request.method == 'POST':
+        
+        time_from = request.POST.get("from", "")
+        time_to = request.POST.get("to", "")
+        days = request.POST.get("days", "")
+        
+        if not availabililty:
+            
+            DoctorAvailability.objects.create(
+                doctor=current_doctor, time_from=time_from, time_to=time_to, days=days
+            )
+        
+        else:
+            availabililty.time_from = time_from
+            availabililty.time_to = time_to
+            availabililty.days = days
+            
+            availabililty.save()
+            
+        return JsonResponse({
+            "message": "Availability Updated successfully...",
+            "success": True
+        })    
+    return render(request, "doctor/d-dash.html", {'availability': availabililty})
+
+@login_required(login_url='/')
+def patient_appointments(request):
+    return render(request, "patient/my-appointment.html")
+
+@login_required(login_url='/')
+def d_profile(request):
+    current_user = request.user
+    current_doctor = DoctorProfile.objects.filter(doctor=current_user).first()
+
+    if request.method == 'POST':
+        specialization = request.POST.get('specialization', '')
+        bio = request.POST.get('bio', '')
+        photo = request.FILES.get('photo', None)
+
+        clean_sp = specialization.replace(",", " | ")
+
+        if not current_doctor:
+            DoctorProfile.objects.create(
+                doctor=current_user,
+                speciallization=clean_sp,
+                biography=bio,
+                profile_img=photo
+            )
+        else:
+            current_doctor.speciallization = clean_sp
+            current_doctor.biography = bio
+            if photo:
+                current_doctor.profile_img = photo
+            current_doctor.save()
+
+        return JsonResponse({
+            "message": "Profile Updated successfully...",
+            "success": True
+        })
+
+    return render(request, "doctor/profile.html", {
+        'current_user': current_user,
+        'current_doctor': current_doctor
+    })
+
+@login_required(login_url='/')
+def p_profile(request):
+    current_user = User.objects.get(username=request.user)
+    current_patient = PatientProfile.objects.filter(patient=current_user).first()
+    if request.method == 'POST':
+        email = request.POST.get("email", "")
+        phone_number = request.POST.get("phone_number", "")
+        photo = request.FILES.get("photo", None)
+        
+        if not current_patient:
+            
+            PatientProfile.objects.create(
+                patient=current_user, email=email, phone_number=phone_number,
+                profile_img=photo
+            )
+        
+        else:
+            current_patient.email = email
+            current_patient.phone_number = phone_number
+            
+            if photo:
+                current_patient.profile_img = photo
+            current_patient.save()
+        return JsonResponse({
+            "message": "Profile Updated successfully...",
+            "success": True
+        })
+    return render(request, 'patient/profile.html', {'current_patient': current_patient, 'current_user': current_user})
+
+@login_required(login_url='/')
+def book_appointment(request):
+    return render(request, "patient/book-appointment.html")
 
 @login_required(login_url='/')
 def a_dash(request):

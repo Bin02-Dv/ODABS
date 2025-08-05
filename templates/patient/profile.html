@@ -1,0 +1,82 @@
+{% extends "patient/p-base.html" %}
+
+{% block content %}
+
+<style>
+    img{
+        height: 300px;
+        width: 300px;
+        border: 1px solid rgb(212, 211, 211);
+        border-radius: 5px;
+    }
+</style>
+
+<div class="container mt-4">
+  <h2 class="mb-4">Profile Settings</h2>
+  <img src="{{current_patient.profile_img.url}}  " alt="No Image">
+  <div class="form-group">
+        <div class="alert-danger"></div>
+        <div class="alert-success"></div>
+  </div>
+  <form method="POST" enctype="multipart/form-data" id="profile">
+    {% csrf_token %}
+    <div class="mb-3">
+      <label for="name" class="form-label">Full Name</label>
+      <input type="text" class="form-control" id="name" value="{{current_user.first_name}}" readonly>
+    </div>
+
+    <div class="mb-3">
+      <label for="email" class="form-label">Email</label>
+      <input type="email" class="form-control" id="email" name="email" value="{{current_patient.email}}">
+    </div>
+
+    <div class="mb-3">
+      <label for="phone_number" class="form-label">Phone Number</label>
+      <input type="text" class="form-control" id="phone_number" name="phone_number" value="{{current_patient.phone_number}}">
+    </div>
+
+    <div class="mb-3">
+      <label for="photo" class="form-label">Profile Photo</label>
+      <input class="form-control" type="file" name="photo" id="photo">
+    </div>
+
+    <button type="submit" class="btn btn-primary">Save Changes</button>
+  </form>
+</div>
+
+<script>
+    $(document).on('submit', '#profile', function (e){
+        e.preventDefault();
+        var green = $(".alert-success");
+        var red = $(".alert-danger");
+        var formData = new FormData(this);
+        $.ajax({
+            type: 'POST',
+            url: '/p-profile/', 
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function (response){
+                var success = response['success'];
+                if(success){
+                    red.removeClass("block");
+                    green.html('');
+                    green.addClass("block");
+                    green.append(response['message']);
+                }else{
+                    green.removeClass("block");
+                    red.html('');
+                    red.addClass("block");
+                    red.append(response['message']);
+                }
+
+                const con = document.querySelector('.conn');
+                if (con) {
+                    con.scrollTo({ top: 0, behavior: 'smooth' });
+                }
+            }
+        });
+    });
+  </script>
+
+{% endblock %}
