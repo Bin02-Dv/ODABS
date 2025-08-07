@@ -42,8 +42,21 @@ class Appointments(models.Model):
     time = models.CharField(max_length=10, blank=True)
     message_or_reason = models.TextField(max_length=250, blank=True)
     doctor = models.ForeignKey(DoctorProfile, on_delete=models.CASCADE)
-    next_app = models.BooleanField(default=True)
+    status = models.CharField(default='Pending')
     
     def __str__(self):
         return self.patient.patient.first_name, self.patient.patient.last_name
+
+class MedicalHistory(models.Model):
+    
+    patient = models.ForeignKey(PatientProfile, on_delete=models.CASCADE)
+    doctor = models.ForeignKey(DoctorProfile, on_delete=models.CASCADE)
+    appointment = models.ForeignKey(Appointments, on_delete=models.CASCADE)
+    diagnosis = models.TextField(max_length=200, blank=True)
+    prescription = models.TextField(max_length=200, blank=True)
+    note = models.TextField(max_length=200, blank=True)
+    date = models.DateField(auto_now_add=True)
+    
+    def __str__(self):
+        return f"Prescription and note wrote by {self.doctor.doctor.first_name} for {self.patient.patient.first_name}"
 

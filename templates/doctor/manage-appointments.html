@@ -1,0 +1,122 @@
+{% extends "doctor/d-base.html" %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="mb-4">Manage Appointments</h2>
+
+    <div class="card mb-4">
+        <div class="card-body">
+            <form class="row g-3" method="get" action="/search-appointments/">
+                <div class="col-md-4">
+                    <input type="date" class="form-control" name="date" value="{{ request.GET.date }}">
+                </div>
+                <div class="col-md-4">
+                    <select name="status" class="form-select">
+                        <option value="">-- Filter by Status --</option>
+                        <option value="Pending" {% if request.GET.status == "Pending" %}selected{% endif %}>Pending</option>
+                        <option value="Completed" {% if request.GET.status == "Completed" %}selected{% endif %}>Completed</option>
+                        <option value="Missed" {% if request.GET.status == "Missed" %}selected{% endif %}>Missed</option>
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <button class="btn btn-primary" type="submit">Filter</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="alert-danger"></div>
+        <div class="alert-success"></div>
+    </div>
+    {% if appointments %}
+    <div class="table-responsive">
+        <table class="table table-striped">
+            <thead class="table-dark">
+                <tr>
+                    <th>#</th>
+                    <th>Patient</th>
+                    <th>Date</th>
+                    <th>Time</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for appt in appointments %}
+                <tr>
+                    <td>{{ forloop.counter }}</td>
+                    <td>{{ appt.patient.patient.first_name }}</td>
+                    <td>{{ appt.date }}</td>
+                    <td>{{ appt.time }}</td>
+                    <td>
+                        <span class="badge {% if appt.status == 'Pending' %}bg-warning{% elif appt.status == 'Completed' %}bg-success{% else %}bg-danger{% endif %}">
+                            {{ appt.status }}
+                        </span>
+                    </td>
+                    <td>
+                        <form method="post" class="d-flex gap-2" id="appointment">
+                            <input type="hidden" value="{{appt.patient.id}}" name="patient">
+                            <input type="hidden" value="{{appt.id}}" name="appointment">
+                            {% csrf_token %}
+                            <select name="status" class="form-select form-select-sm">
+                                <option value="Pending" {% if appt.status == 'Pending' %}selected{% endif %}>Pending</option>
+                                <option value="Completed" {% if appt.status == 'Completed' %}selected{% endif %}>Completed</option>
+                                <option value="Missed" {% if appt.status == 'Missed' %}selected{% endif %}>Missed</option>
+                            </select>
+                            <!-- <input type="text" name="notes" class="form-control form-control-sm" placeholder="Consultation Notes" value="{{ appt.notes }}"> -->
+                            {% if appt.status == 'Pending' %}
+                            <textarea name="note" id="" class="form-control form-control-sm" placeholder="Consultation Notes"></textarea>
+                            <textarea name="diagonosis" id="" class="form-control form-control-sm" placeholder="Consultation Diagonosis"></textarea>
+                            <textarea name="prescription" id="" class="form-control form-control-sm" placeholder="Consultation Prescription"></textarea>
+                            <button class="btn btn-success btn-sm" type="submit">Save</button>
+                            {% else %}
+                            <button class="btn btn-success btn-sm" disabled type="submit">Save</button>
+                            {% endif %}
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+        <p>No appointments found.</p>
+    {% endif %}
+</div>
+
+
+<script>
+    $(document).on('submit', '#appointment', function (e){
+        e.preventDefault();
+        var green = $(".alert-success");
+        var red = $(".alert-danger");
+        var formData = new FormData(this);
+        $.ajax({
+            type: 'POST',
+            url: '/doctor-appointment-management/', 
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function (response){
+                var success = response['success'];
+                if(success){
+                    red.removeClass("block");
+                    green.html('');
+                    green.addClass("block");
+                    green.append(response['message']);
+                }else{
+                    green.removeClass("block");
+                    red.html('');
+                    red.addClass("block");
+                    red.append(response['message']);
+                }
+
+                const con = document.querySelector('.conn');
+                if (con) {
+                    con.scrollTo({ top: 0, behavior: 'smooth' });
+                }
+            }
+        });
+    });
+  </script>
+{% endblock %}

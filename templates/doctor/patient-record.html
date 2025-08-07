@@ -1,0 +1,32 @@
+{% extends 'doctor/d-base.html' %}
+{% block content %}
+<div class="container mt-4">
+    <h2 class="mb-4">Patient Records</h2>
+    {% if records %}
+        <table class="table table-bordered table-hover">
+            <thead>
+                <tr>
+                    <th>Patient</th>
+                    <th>Date</th>
+                    <th>Diagnosis</th>
+                    <th>Prescriptions</th>
+                    <th>Notes</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for record in records %}
+                    <tr>
+                        <td>{{ record.patient.patient.first_name }}</td>
+                        <td>{{ record.date }}</td>
+                        <td>{{ record.diagnosis }}</td>
+                        <td>{{ record.prescription }}</td>
+                        <td>{{ record.note }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>No patient records found.</p>
+    {% endif %}
+</div>
+{% endblock %}

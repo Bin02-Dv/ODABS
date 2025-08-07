@@ -3,7 +3,7 @@ from django.contrib.auth.models import User
 from django.http import JsonResponse
 from django.contrib import auth
 from django.contrib.auth.decorators import login_required
-from .models import DoctorProfile, DoctorAvailability, PatientProfile, Appointments
+from .models import DoctorProfile, DoctorAvailability, PatientProfile, Appointments, MedicalHistory
 
 # Create your views here.
 
@@ -46,9 +46,99 @@ def d_dash(request):
     return render(request, "doctor/d-dash.html", {'availability': availabililty})
 
 @login_required(login_url='/')
+def search_appointments(request):
+    doctor = DoctorProfile.objects.get(doctor=request.user)
+    appointments = Appointments.objects.filter(doctor=doctor).order_by('-date', '-time')
+
+    date = request.GET.get('date')
+    status = request.GET.get('status')
+
+    if date:
+        appointments = appointments.filter(date=date)
+    if status:
+        appointments = appointments.filter(status=status)
+
+    return render(request, 'doctor/search-appointments.html', {
+        'appointments': appointments,
+    })
+
+@login_required(login_url='/')
+def patient_record(request):
+    current_doctor = DoctorProfile.objects.get(doctor=request.user)
+    records = MedicalHistory.objects.filter(doctor=current_doctor)
+    context = {
+        'records': records
+    }
+    return render(request, 'doctor/patient-record.html', context)
+
+@login_required(login_url='/')
+def doctor_appointment_management(request):
+    current_doctor = DoctorProfile.objects.get(doctor=request.user)
+    appointments = Appointments.objects.filter(doctor=current_doctor).order_by('-date')
+    
+    if request.method == 'POST':
+        note = request.POST.get('note', '')
+        diagonosis = request.POST.get('diagonosis', '')
+        prescription = request.POST.get('prescription', '')
+        status = request.POST.get('status', '')
+        patient = request.POST.get('patient', '')
+        appointment = request.POST.get('appointment', '')
+        
+        appointment_existent_check = MedicalHistory.objects.filter(appointment=appointment).first()
+        try:
+            get_appointment = Appointments.objects.get(id=appointment)
+        except Appointments.DoesNotExist:
+            return JsonResponse({
+                "message": "Sorry we couldn't find this appointment!!",
+                "success": False
+            })
+        try:
+            get_patient = PatientProfile.objects.get(id=patient)
+        except Appointments.DoesNotExist:
+            return JsonResponse({
+                "message": "Sorry we couldn't find this appointment!!",
+                "success": False
+            })
+        
+        if not note or not diagonosis or not prescription:
+            return JsonResponse({
+                "message": "Sorry to complete the task.. Note, Diagonosis and Prescription are required!!",
+                "success": False
+            })
+        
+        elif appointment_existent_check:
+            appointment_existent_check.note = note
+            appointment_existent_check.diagnosis = diagonosis
+            appointment_existent_check.prescription = prescription
+            get_appointment.status = status
+            
+            appointment_existent_check.save()
+            get_appointment.save()
+            
+            return JsonResponse({
+                "message": "Appointment Updated Successfully...",
+                "success": True
+            })
+        else:
+            MedicalHistory.objects.create(
+                patient=get_patient, doctor=current_doctor, appointment=get_appointment, diagnosis=diagonosis,
+                prescription=prescription, note=note
+            )
+            get_appointment.status = status
+            get_appointment.save()
+            return JsonResponse({
+                "message": "Appointment Updated Successfully...",
+                "success": True
+            })
+    context = {
+        'appointments': appointments
+    }
+    return render(request, 'doctor/manage-appointments.html', context)
+
+@login_required(login_url='/')
 def patient_appointments(request):
     current_user = PatientProfile.objects.get(patient=request.user)
-    apppointments = Appointments.objects.filter(patient=current_user, next_app=True)
+    apppointments = Appointments.objects.filter(patient=current_user)
     context = {
         'appointments': apppointments
     }
@@ -153,8 +243,26 @@ def book_appointment(request):
     return render(request, "patient/book-appointment.html", context)
 
 @login_required(login_url='/')
+def medical_history(request):
+    currrent_patient = PatientProfile.objects.get(patient=request.user)
+    m_history = MedicalHistory.objects.filter(patient=currrent_patient).order_by('-date')
+    context = {
+        'm_history': m_history
+    }
+    return render(request, 'patient/medical-history.html', context)
+
+@login_required(login_url='/')
 def a_dash(request):
-    return render(request, "admin/a-dash.html")
+    doctors = DoctorProfile.objects.all().count()
+    patients = PatientProfile.objects.all().count()
+    appointment = Appointments.objects.all().count()
+    
+    context = {
+        'doctors': doctors,
+        'patients': patients,
+        'appointment': appointment
+    }
+    return render(request, "admin/a-dash.html", context)
 
 def patient_signUp(request):
     if request.method == 'POST':
@@ -292,3 +400,39 @@ def login(request):
 def logout(request):
     auth.logout(request)
     return redirect('/')
+
+@login_required(login_url='/')
+def all_appointments(request):
+    apppointments = Appointments.objects.all().order_by('-id')
+    doctors = DoctorProfile.objects.all().count()
+    patients = PatientProfile.objects.all().count()
+    appointment = Appointments.objects.all().count()
+    context = {
+        'appointment': appointment,
+        'appointments': apppointments,
+        'doctors': doctors,
+        'patients': patients,
+    }
+    return render(request, 'admin/all-appointments.html', context)
+
+@login_required(login_url='/')
+def all_users(request):
+    users = User.objects.all().order_by('-id')
+    doctors = DoctorProfile.objects.all().count()
+    patients = PatientProfile.objects.all().count()
+    appointment = Appointments.objects.all().count()
+    context = {
+        'users': users,
+        'appointment': appointment,
+        'doctors': doctors,
+        'patients': patients
+    }
+    
+    return render(request, 'admin/all_users.html', context)
+
+
+@login_required(login_url='/')
+def delete_user(request, id):
+    user = User.objects.get(id=id)
+    user.delete()
+    return redirect('/all-users')

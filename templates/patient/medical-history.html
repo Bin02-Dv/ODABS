@@ -1,0 +1,47 @@
+{% extends "patient/p-base.html" %}
+
+{% block content %}
+<div class="container mt-5">
+    <h3 class="mb-4">Medical History / Visit Summary</h3>
+
+    <!-- Medical History Table -->
+    <div class="table-responsive">
+      <table class="table table-bordered table-striped">
+        <thead class="table-primary">
+          <tr>
+            <th>#</th>
+            <th>Date</th>
+            <th>Doctor</th>
+            <th>Specialization</th>
+            <th>Diagnosis</th>
+            <th>Prescription</th>
+            <th>Notes</th>
+          </tr>
+        </thead>
+        <tbody>
+        {% if m_history %}
+        {% for m in m_history %}
+          <tr>
+            <td>MHID-{{m.id}}</td>
+            <td>{{m.date}}</td>
+            <td>Dr. {{m.doctor.doctor.first_name}}</td>
+            <td>{{m.doctor.speciallization}}</td>
+            <td>{{m.diagnosis}}</td>
+            <td>{{m.prescription}}</td>
+            <td>{{m.note}}</td>
+          </tr>
+        {% endfor %}
+        {% else %}
+          <tr>
+            <td>No Medical Histories Yet!</td>
+          </tr>
+          {% endif %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <footer class="text-center mt-5 mb-3 text-muted">
+    &copy; 2025 Online Doctor Appointment Booking System
+  </footer>
+{% endblock %}

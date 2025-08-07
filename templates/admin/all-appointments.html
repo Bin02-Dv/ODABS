@@ -1,4 +1,4 @@
-{% extends 'patient/p-base.html' %}
+{% extends 'admin/a-base.html' %}
 
 {% block content %}
 
@@ -28,10 +28,15 @@
       color: red;
       font-weight: 500;
     }
+
+    .container{
+        height: 50vh;
+        overflow-x: scroll;
+    }
 </style>
 
 <div class="container">
-    <h3 class="mb-4 text-center">My Appointments</h3>
+    <h3 class="mb-4 text-center">All Appointments</h3>
 
     {% if appointments %}
       {% for appointment in appointments %}
@@ -54,7 +59,7 @@
       {% endfor %}
     {% else %}
       <div class="alert alert-info text-center">
-        You have no appointments yet.
+        No appointments yet.
       </div>
     {% endif %}
   </div>
